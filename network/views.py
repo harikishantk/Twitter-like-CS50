@@ -4,7 +4,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post, LikePost, FollowUser
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import PostSerializer, LikePostSerializer, FollowUserSerializer
 
 
 def index(request):
@@ -61,3 +66,16 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+class PostListAPIView(APIView):
+
+    def get(self, request, id):
+        try:
+            posts = Post.objects.get(user = id)
+            serializer = PostSerializer(posts)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            posts = None
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        

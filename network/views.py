@@ -5,12 +5,26 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Post, LikePost, FollowUser
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from .serializers import PostSerializer, LikePostSerializer, FollowUserSerializer
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import permissions
 
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    Assumes the model instance has an `owner` attribute.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # Instance must have an attribute named `owner`.
+        return obj.user == request.user
 
 def index(request):
     return render(request, "network/index.html")
@@ -67,15 +81,11 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-class PostListAPIView(APIView):
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly,]
 
-    def get(self, request, id):
-        try:
-            posts = Post.objects.get(user = id)
-            serializer = PostSerializer(posts)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            posts = None
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    

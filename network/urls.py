@@ -16,6 +16,18 @@ post_detail = views.PostViewSet.as_view({
     'delete': 'destroy'
 })
 
+followuser_list = views.FollowUserViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+followuser_detail = views.FollowUserViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 urlpatterns = [
     path("", views.index, name="index"),
     path("login", views.login_view, name="login"),
@@ -25,4 +37,6 @@ urlpatterns = [
     path('api/posts/', post_list, name='post-list'),
     path('api/posts/<int:pk>/', post_detail, name='post-detail'),
 
+    path('api/followusers/', followuser_list, name='followuser-list'),
+    path('api/followusers/<int:pk>/', followuser_detail, name='followuser-detail'),
 ]

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from django.core.exceptions import ValidationError
 
 class User(AbstractUser):
     pass
@@ -26,7 +26,7 @@ class LikePost(models.Model):
         self.save()
 
 class FollowUser(models.Model):
-    user_followed_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed_by')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed_by', editable=False)
     user_following = models.ManyToManyField(User)
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)

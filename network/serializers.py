@@ -14,4 +14,4 @@ class LikePostSerializer(serializers.ModelSerializer):
 class FollowUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = FollowUser
-        fields = ('id', 'user_followed_by', 'user_following', 'created_on', 'updated_on')
+        fields = ('id', 'user', 'user_following', 'created_on', 'updated_on')

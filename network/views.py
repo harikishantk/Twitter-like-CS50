@@ -89,3 +89,10 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
     
+class FollowUserViewSet(viewsets.ModelViewSet):
+    queryset = FollowUser.objects.all()
+    serializer_class = FollowUserSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly,]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

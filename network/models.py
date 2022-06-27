@@ -6,11 +6,11 @@ class User(AbstractUser):
     pass
 
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
     description = models.TextField()
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
-    like_counts = models.IntegerField(default=0)
+    like_counts = models.IntegerField(default=0, editable=False)
 
     def __str__(self):
         return self.description + ' - ' + str(self.user)
